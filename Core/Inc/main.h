@@ -22,6 +22,9 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
+#include "stm32f4xx_hal.h"
+#include "../../RTOS/inc/osmcal.h"
+
 void task1_handler(void);
 void task2_handler(void);
 void task3_handler(void);

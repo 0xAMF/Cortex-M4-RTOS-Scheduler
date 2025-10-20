@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#endif /* STM32F411CE_H */
+
 /* Base addresses for peripheral buses */
 #define PERIPH_BASE           ((uint32_t)0x40000000)
 #define APB1PERIPH_BASE       PERIPH_BASE

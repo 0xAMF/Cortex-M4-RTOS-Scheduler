@@ -1,6 +1,5 @@
 #include  "../../RTOS/inc/osmcal.h"
 #include  "../../RTOS/inc/osmcal_conf.h"
-#include "../../RTOS/inc/stm32f411ce.h"
 #include "../../Core/Inc/main.h"
 #include <stdint.h>
 
@@ -9,7 +8,7 @@ uint32_t current_task = 0;
 
 void systick_init(uint32_t tickHz) {
     // calculate reload value --> sysclk / reload value
-    uint32_t reload = (SYSTICK_TIM_CLK / tickHz) - 1; // decrement by one to take multishot in consideration
+    uint32_t reload = (SystemCoreClock / tickHz) - 1; // decrement by one to take multishot in consideration
 
     SysTick->LOAD = reload;
 
@@ -31,10 +30,10 @@ __attribute__ ((naked)) void sched_stack_init(uint32_t stacktop) {
 
 void task_stack_init(void) {
     uint32_t task_handler[MAX_TASKS] = {
-		&task1_handler,
-		&task2_handler,
-		&task3_handler,
-		&task4_handler
+		(uint32_t)&task1_handler,
+		(uint32_t)&task2_handler,
+		(uint32_t)&task3_handler,
+		(uint32_t)&task4_handler
     };
 
     uint32_t *local_taskpsp;
@@ -42,13 +41,13 @@ void task_stack_init(void) {
     for (int i = 0; i < MAX_TASKS; i++) {
 	local_taskpsp = (uint32_t *)task_psp[i];
 	local_taskpsp--; // point to the end of the stack and the beginning of the stacked registers (XPSR register)
-	*local_taskpsp = DUMMY_XPSR;
+	*local_taskpsp = 0x01000000;
 
 	local_taskpsp--; // point to the next regsiter in the stack, which is the PC
 	*local_taskpsp = task_handler[i];
 
 	local_taskpsp--; // point to LR
-	*local_taskpsp = DUMMY_LR;
+	*local_taskpsp = 0xFFFFFFFD;
 	
 	// initialize 14 GPRs with zeros
 	for (int i = 0; i < 13; i++) {
@@ -64,9 +63,9 @@ void task_stack_init(void) {
 
 void sysfaults_enable(void) {
     // enable memfault, Bus fault, and usage faults
-	SCB->SHCSR |= (MEMFAULTENA_MASK);
-    SCB->SHCSR |= (BUSFAULTENA_MASK);
-    SCB->SHCSR |= (USGFAULTENA_MASK);
+	SCB->SHCSR |= (SCB_SHCSR_MEMFAULTENA_Msk);
+    SCB->SHCSR |= (SCB_SHCSR_BUSFAULTENA_Msk);
+    SCB->SHCSR |= (SCB_SHCSR_USGFAULTENA_Msk);
 }
 
 static uint32_t get_current_psp(void) {

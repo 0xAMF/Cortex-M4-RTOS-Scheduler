@@ -1,9 +1,0 @@
-../RTOS/src/osmcal.c:10:6:systick_init	1
-../RTOS/src/osmcal.c:24:30:sched_stack_init	1
-../RTOS/src/osmcal.c:32:6:task_stack_init	3
-../RTOS/src/osmcal.c:65:6:sysfaults_enable	1
-../RTOS/src/osmcal.c:72:17:get_current_psp	1
-../RTOS/src/osmcal.c:77:13:save_psp	1
-../RTOS/src/osmcal.c:81:13:update_next_task	1
-../RTOS/src/osmcal.c:87:29:switch_to_psp	1
-../RTOS/src/osmcal.c:103:29:SysTick_Handler	1
